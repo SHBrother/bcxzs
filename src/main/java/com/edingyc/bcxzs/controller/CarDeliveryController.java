@@ -39,6 +39,7 @@ public class CarDeliveryController {
         String id = carDeliveryService.addCarDelivery(carTransportDTO);
         Map<String,String> map = new HashMap<>();
         map.put("id",id);
+        System.out.println("111");
         return ResultUtil.success(map);
 
     }
