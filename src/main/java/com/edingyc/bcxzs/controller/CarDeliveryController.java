@@ -52,6 +52,7 @@ public class CarDeliveryController {
         Sort sort = new Sort(Direction.DESC, "deliveryTime");
         Pageable pageable = PageRequest.of(page,size,sort);
         List<CarTransportDTO> carTransportDTOList = carDeliveryService.findCarDeliveryList(pageable);
+        System.out.println();
         return ResultUtil.success(carTransportDTOList);
 
     }
