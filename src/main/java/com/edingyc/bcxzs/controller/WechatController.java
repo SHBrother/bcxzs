@@ -82,7 +82,7 @@ public class WechatController {
     @GetMapping("/webLogin/{code}")
     public ResultDTO webLogin(@PathVariable String code) throws WrapException{
         try {
-            String url = pcConfig.getAccessTokenUrl()+"?"+"appid=" +pcConfig.getAppid() +"&code=" +code + "&secret="+pcConfig.getSecret()+"&grant_type="+pcConfig.getGrant_type();
+            /*String url = pcConfig.getAccessTokenUrl()+"?"+"appid=" +pcConfig.getAppid() +"&code=" +code + "&secret="+pcConfig.getSecret()+"&grant_type="+pcConfig.getGrant_type();
             RestTemplate restTemplate = new RestTemplate();
             String loginResp = restTemplate.getForObject(url, String.class);
             JSONObject jo = JSON.parseObject(loginResp);
@@ -104,6 +104,8 @@ public class WechatController {
             }
 
             String value = unionid +","+access_token+","+ RandomStringUtils.randomAlphanumeric(5);
+            String key = MD5Util.encrypt(value);*/
+            String value = RandomStringUtils.randomAlphanumeric(10)+","+ RandomStringUtils.randomAlphanumeric(10);
             String key = MD5Util.encrypt(value);
             log.info(value);
             CacheUtils.setCache(key,value);

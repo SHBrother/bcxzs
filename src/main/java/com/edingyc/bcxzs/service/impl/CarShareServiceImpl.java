@@ -4,6 +4,7 @@ import com.edingyc.bcxzs.Utils.EbusRequestSession;
 import com.edingyc.bcxzs.Utils.convert.ConvertUtil;
 import com.edingyc.bcxzs.Utils.randomId.IDGenerator;
 import com.edingyc.bcxzs.dataEntity.*;
+import com.edingyc.bcxzs.dto.CarRecordExcelDTO;
 import com.edingyc.bcxzs.dto.CarShareDTO;
 import com.edingyc.bcxzs.dto.PicDTO;
 import com.edingyc.bcxzs.dto.UserDTO;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,6 +26,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +49,8 @@ public class CarShareServiceImpl implements CarShareService{
     CarShareRepository carShareRepository;
     @Autowired
     PicRepository picRepository;
+    @Autowired
+    CarInfoRepository carInfoRepository;
     @Autowired
     CarReceiveHistoryRepository carReceiveHistoryRepository;
     @Value("${picAddr}")
@@ -193,9 +199,15 @@ public class CarShareServiceImpl implements CarShareService{
                 if (!StringUtils.isEmpty(carShareDTO.getDelegateCompany())){
                     predicateList.add(cb.like(root.get("delegateCompany").as(String.class),"%"+carShareDTO.getDelegateCompany()+"%"));
                 }
-                if (!StringUtils.isEmpty(carShareDTO.getDeliveryTime())){
-                    predicateList.add(cb.equal(root.get("deliveryTime").as(Date.class),carShareDTO.getDeliveryTime()));
+
+                Date receiveTime = carShareDTO.getReceiveTime();
+                if (!StringUtils.isEmpty(receiveTime)){
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String rTime = "";
+                    rTime = sdf.format(receiveTime);
+                    predicateList.add(cb.like(root.get("receiveTime").as(String.class),rTime));
                 }
+
                 predicateList.add(cb.equal(root.get("fileFlag").as(int.class),1));
                 Predicate[] arrayPredicates = new Predicate[predicateList.size()];
                 return cb.and(predicateList.toArray(arrayPredicates));
@@ -217,5 +229,46 @@ public class CarShareServiceImpl implements CarShareService{
             userEntityList.add(userEntity);
         });
         return ConvertUtil.convert(userEntityList,UserDTO.class);
+    }
+
+    @Override
+    public List<CarRecordExcelDTO> findCarRecordExcelDTO(Date settleDate,String delegateCompany) throws WrapException{
+
+        Specification<CarShareEntity> specification = (Root<CarShareEntity> root, CriteriaQuery<?> criteriaQuery, CriteriaBuilder cb) -> {
+            List<Predicate> predicateList = new ArrayList();
+            if (!StringUtils.isEmpty(delegateCompany)){
+                predicateList.add(cb.equal(root.get("delegateCompany").as(String.class),delegateCompany));
+            }
+            if (settleDate != null){
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String rTime  = sdf.format(settleDate);
+                predicateList.add(cb.like(root.get("receiveTime").as(String.class),rTime));
+            }
+            predicateList.add(cb.equal(root.get("fileFlag").as(int.class),1));
+            Predicate[] arrayPredicates = new Predicate[predicateList.size()];
+            return cb.and(predicateList.toArray(arrayPredicates));
+        };
+        Sort sort = new Sort(Direction.DESC,"shareTime");
+        List<CarShareEntity> carShareEntityList = carShareRepository.findAll(specification,sort);
+
+        List<CarRecordExcelDTO> carRecordExcelDTOList = new ArrayList<>();
+        for (CarShareEntity carShareEntity:carShareEntityList) {
+            CarInfoEntity carInfoEntity1 = carInfoRepository.findByRecordId(carShareEntity.getId());
+            CarInfoEntity carInfoEntity2 = carInfoRepository.findByRecordId(carShareEntity.getReceiveId());
+            CarRecordExcelDTO carRecordExcelDTO1 = ConvertUtil.convert(carInfoEntity1,CarRecordExcelDTO.class);
+            CarRecordExcelDTO carRecordExcelDTO2 = ConvertUtil.convert(carInfoEntity2,CarRecordExcelDTO.class);
+            carRecordExcelDTO1.setReceiveAddr(carShareEntity.getReceiveAddr());
+            carRecordExcelDTO1.setDeliveryAddr(carShareEntity.getDeliveryAddr());
+            carRecordExcelDTO1.setFee(carShareEntity.getFee());
+            carRecordExcelDTO1.setVin(carShareEntity.getVin());
+            carRecordExcelDTO2.setReceiveAddr(carShareEntity.getReceiveAddr());
+            carRecordExcelDTO2.setDeliveryAddr(carShareEntity.getDeliveryAddr());
+            carRecordExcelDTO2.setFee(carShareEntity.getFee());
+            carRecordExcelDTO2.setVin(carShareEntity.getVin());
+
+            carRecordExcelDTOList.add(carRecordExcelDTO1);
+            carRecordExcelDTOList.add(carRecordExcelDTO2);
+        }
+        return carRecordExcelDTOList;
     }
 }

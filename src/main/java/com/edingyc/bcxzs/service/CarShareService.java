@@ -1,11 +1,13 @@
 package com.edingyc.bcxzs.service;
 
 import com.edingyc.bcxzs.dataEntity.UserEntity;
+import com.edingyc.bcxzs.dto.CarRecordExcelDTO;
 import com.edingyc.bcxzs.dto.CarShareDTO;
 import com.edingyc.bcxzs.dto.UserDTO;
 import com.edingyc.bcxzs.exception.WrapException;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 public interface CarShareService {
@@ -31,5 +33,7 @@ public interface CarShareService {
     List<CarShareDTO> findCarFileList(Pageable pageable,CarShareDTO carShareDTO) throws WrapException;
 
     List<UserDTO> findUserList() throws WrapException;
+
+    List<CarRecordExcelDTO> findCarRecordExcelDTO(Date settleDate, String delegateCompany) throws WrapException;
 
 }

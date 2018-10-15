@@ -5,7 +5,7 @@ spring:
     password: bcxzs!$123
     url: jdbc:mysql://39.108.147.128:6300/bcxzs?characterEncoding=utf-8&useSSL=false
   jpa:
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         hbm2ddl:
@@ -27,8 +27,8 @@ applet:
    grant_type: authorization_code
 
 pc:
-   appid: 1
-   secret: 1
+   appid: wx4c324b41355a11b0
+   secret: ea19e67f6ee8df317a74b910c0f0ff44
    grant_type: authorization_code
    accessTokenUrl: https://api.weixin.qq.com/sns/oauth2/access_token
    userInfoUrl: https://api.weixin.qq.com/sns/userinfo

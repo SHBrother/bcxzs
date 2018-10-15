@@ -7,7 +7,8 @@ public enum ExceptionMsg {
     LoginError(2, "login error"),
     DTO2EntityError(3,"fail to convert DTO to entity"),
     DuplicateVinError(4,"duplicate vin"),
-    MD5ParseError(5,"md5 parse error");
+    MD5ParseError(5,"md5 parse error"),
+    DateFormatError(6,"date format error");
 
     ExceptionMsg(Integer code, String msg) {
         this.code = code;
