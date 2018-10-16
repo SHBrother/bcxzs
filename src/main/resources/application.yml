@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    username: bcxzs
-    password: bcxzs!$123
-    url: jdbc:mysql://39.108.147.128:6300/bcxzs?characterEncoding=utf-8&useSSL=false
+    username: 
+    password: 
+    url: 
   jpa:
     show-sql: false
     properties:
@@ -15,24 +15,24 @@ spring:
 
 server:
   servlet:
-    context-path: /bcxzs
-  port: 8090
+    context-path: 
+  port: 
 
 
 
 applet:
-   loginUrl: https://api.weixin.qq.com/sns/jscode2session
-   appid: wx4a7829f2688c8ce8
-   secret: c3a4b7c58663039e6691687bbf192bf0
-   grant_type: authorization_code
+   loginUrl: 
+   appid: 
+   secret: 
+   grant_type: 
 
 pc:
-   appid: 1
-   secret: 1
-   grant_type: authorization_code
-   accessTokenUrl: https://api.weixin.qq.com/sns/oauth2/access_token
-   userInfoUrl: https://api.weixin.qq.com/sns/userinfo
+   appid: 
+   secret: 
+   grant_type: 
+   accessTokenUrl: 
+   userInfoUrl: 
 
-picAddr: http://pfll08m1b.bkt.clouddn.com/
+picAddr: 
 
 
